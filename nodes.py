@@ -75,7 +75,7 @@ def update_func(self, context):
 
 
 class RendermanSocket:
-    ui_open = BoolProperty(name='UI Open', default=True)
+    ui_open: BoolProperty(name='UI Open', default=True)
 
     def get_pretty_name(self, node):
         if node.bl_idname in group_nodes:
@@ -132,8 +132,8 @@ class RendermanNodeSocketFloat(bpy.types.NodeSocketFloat, RendermanSocket):
     bl_idname = 'RendermanNodeSocketFloat'
     bl_label = 'RenderMan Float Socket'
 
-    default_value = FloatProperty(update=update_func)
-    renderman_type = StringProperty(default='float')
+    default_value: FloatProperty(update=update_func)
+    renderman_type: StringProperty(default='float')
 
     def draw_color(self, context, node):
         return (0.5, 0.5, 0.5, 1.0)
@@ -156,8 +156,8 @@ class RendermanNodeSocketInt(bpy.types.NodeSocketInt, RendermanSocket):
     bl_idname = 'RendermanNodeSocketInt'
     bl_label = 'RenderMan Int Socket'
 
-    default_value = IntProperty(update=update_func)
-    renderman_type = StringProperty(default='int')
+    default_value: IntProperty(update=update_func)
+    renderman_type: StringProperty(default='int')
 
     def draw_color(self, context, node):
         return (1.0, 1.0, 1.0, 1.0)
@@ -179,9 +179,9 @@ class RendermanNodeSocketString(bpy.types.NodeSocketString, RendermanSocket):
     '''RenderMan string input/output'''
     bl_idname = 'RendermanNodeSocketString'
     bl_label = 'RenderMan String Socket'
-    default_value = StringProperty(update=update_func)
-    is_texture = BoolProperty(default=False)
-    renderman_type = StringProperty(default='string')
+    default_value: StringProperty(update=update_func)
+    is_texture: BoolProperty(default=False)
+    renderman_type: StringProperty(default='string')
 
 
 class RendermanNodeSocketStruct(bpy.types.NodeSocketString, RendermanSocket):
@@ -189,8 +189,8 @@ class RendermanNodeSocketStruct(bpy.types.NodeSocketString, RendermanSocket):
     bl_idname = 'RendermanNodeSocketStruct'
     bl_label = 'RenderMan Struct Socket'
     hide_value = True
-    renderman_type = 'string'
-    default_value = ''
+    renderman_type: 'string'
+    default_value: ''
 
 
 class RendermanNodeSocketInterfaceStruct(bpy.types.NodeSocketInterfaceString, RendermanSocketInterface):
@@ -206,9 +206,9 @@ class RendermanNodeSocketColor(bpy.types.NodeSocketColor, RendermanSocket):
     bl_idname = 'RendermanNodeSocketColor'
     bl_label = 'RenderMan Color Socket'
 
-    default_value = FloatVectorProperty(size=3,
+    default_value: FloatVectorProperty(size=3,
                                         subtype="COLOR", update=update_func)
-    renderman_type = StringProperty(default='color')
+    renderman_type: StringProperty(default='color')
 
     def draw_color(self, context, node):
         return (1.0, 1.0, .5, 1.0)
@@ -410,7 +410,7 @@ class RendermanShadingNode(bpy.types.ShaderNode):
             node = context.node
         else:
             node = nodeOR
-        prefs = bpy.context.user_preferences.addons[__package__].preferences
+        prefs = bpy.context.preferences.addons[__package__].preferences
 
         out_path = user_path(prefs.env_vars.out)
         compile_path = os.path.join(user_path(prefs.env_vars.out), "shaders")
@@ -452,7 +452,7 @@ class RendermanShadingNode(bpy.types.ShaderNode):
                 FileNameNoEXT = os.path.splitext(script.name)[0]
                 FileNameOSO = FileNameNoEXT
                 FileNameOSO += ".oso"
-                node.plugin_name = FileNameNoEXT
+                node.plugin_name: FileNameNoEXT
                 ok = node.compile_osl(osl_file.name, compile_path, script.name)
                 export_path = os.path.join(
                     user_path(prefs.env_vars.out), "shaders", FileNameOSO)
@@ -461,7 +461,7 @@ class RendermanShadingNode(bpy.types.ShaderNode):
                 ok = node.compile_osl(osl_path, compile_path)
                 FileName = os.path.basename(osl_path)
                 FileNameNoEXT = os.path.splitext(FileName)[0]
-                node.plugin_name = FileNameNoEXT
+                node.plugin_name: FileNameNoEXT
                 FileNameOSO = FileNameNoEXT
                 FileNameOSO += ".oso"
                 export_path = os.path.join(
@@ -480,7 +480,7 @@ class RendermanShadingNode(bpy.types.ShaderNode):
             debug('osl', prop_names, "MetaInfo: ", shader_meta)
             # Set node name to shader name
             node.label = shader_meta["shader"]
-            node.plugin_name = shader_meta["shader"]
+            node.plugin_name: shader_meta["shader"]
             # Generate new inputs and outputs
             setattr(node, 'shader_meta', shader_meta)
             node.setOslProps(prop_names, shader_meta)
@@ -664,7 +664,7 @@ def generate_node_type(prefs, name, args):
     if name == 'PxrRamp':
         ntype.node_group = StringProperty('color_ramp', default='')
 
-    ntype.plugin_name = StringProperty(name='Plugin Name',
+    ntype.plugin_name: StringProperty(name='Plugin Name',
                                        default=name, options={'HIDDEN'})
     # lights cant connect to a node tree in 20.0
     class_generate_properties(ntype, name, inputs + outputs)
@@ -1314,7 +1314,7 @@ def gen_params(ri, node, mat_name=None):
     if node.bl_idname == "PxrOSLPatternNode":
 
         if getattr(node, "codetypeswitch") == "EXT":
-            prefs = bpy.context.user_preferences.addons[__package__].preferences
+            prefs = bpy.context.preferences.addons[__package__].preferences
             osl_path = user_path(getattr(node, 'shadercode'))
             FileName = os.path.basename(osl_path)
             FileNameNoEXT,ext = os.path.splitext(FileName)
@@ -2266,7 +2266,7 @@ def register():
     for cls in classes:
         bpy.utils.register_class(cls)
 
-    user_preferences = bpy.context.user_preferences
+    user_preferences = bpy.context.preferences
     prefs = user_preferences.addons[__package__].preferences
 
     categories = {}
